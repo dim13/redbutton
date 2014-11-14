@@ -114,6 +114,9 @@ main(char argc, char **argv)
 
 	for (;;) {
 		value = getButton(handle, dev);
+		if (!value)
+			continue;
+
 		button = !(value & 0x01);
 		lid = !!(value & 0x02);
 
