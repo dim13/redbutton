@@ -1,15 +1,12 @@
 package main
 
 import (
-	"flag"
 	"log"
+	"os"
 	"os/exec"
-	"strings"
 
 	"dim13.org/redbutton"
 )
-
-var cmd = flag.String("cmd", "echo ok", "cmd to run")
 
 type StateFn func(redbutton.Button) StateFn
 
@@ -24,7 +21,7 @@ func Init(b redbutton.Button) StateFn {
 func Armed(b redbutton.Button) StateFn {
 	if b == redbutton.Pressed {
 		log.Println("Go!")
-		Exec(*cmd)
+		Exec(os.Args[1:])
 		return Reset
 	}
 	return Init
@@ -37,9 +34,8 @@ func Reset(b redbutton.Button) StateFn {
 	return Reset
 }
 
-func Exec(s string) {
-	parts := strings.Fields(s)
-	cmd := exec.Command(parts[0], parts[1:]...)
+func Exec(args []string) {
+	cmd := exec.Command(args[0], args[1:]...)
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Fatal(err)
@@ -48,7 +44,9 @@ func Exec(s string) {
 }
 
 func main() {
-	flag.Parse()
+	if len(os.Args) < 2 {
+		log.Fatal("Usage: ", os.Args[0], " <command>")
+	}
 
 	dev, err := redbutton.Open()
 	if err != nil {

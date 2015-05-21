@@ -1,7 +1,6 @@
 package redbutton
 
 import (
-	"errors"
 	"time"
 
 	"github.com/GeertJohan/go.hid"
@@ -32,24 +31,24 @@ func (b Button) String() string {
 	return state[b]
 }
 
-func State(dev *hid.Device) (Button, error) {
+func State(dev *hid.Device) (Button, bool) {
 	buf := make([]byte, 8)
 	buf[0] = 0x01
 	buf[7] = 0x02
 
 	if _, err := dev.Write(buf); err != nil {
-		return Unknown, err
+		return Unknown, false
 	}
 
 	if _, err := dev.ReadTimeout(buf, 10); err != nil {
-		return Unknown, err
+		return Unknown, false
 	}
 
 	if buf[7] != 0x03 {
-		return Unknown, errors.New("bad magic")
+		return Unknown, false
 	}
 
-	return Button(buf[0] & 0x03), nil
+	return Button(buf[0] & 0x03), true
 }
 
 func Poll(dev *hid.Device) <-chan Button {
@@ -57,14 +56,12 @@ func Poll(dev *hid.Device) <-chan Button {
 	go func() {
 		prev := Unknown
 		for {
-			state, err := State(dev)
-			if err != nil {
-				panic(err)
+			if state, ok := State(dev); ok {
+				if state != prev {
+					ch <- state
+				}
+				prev = state
 			}
-			if state != prev {
-				ch <- state
-			}
-			prev = state
 			time.Sleep(100 * time.Millisecond)
 		}
 	}()
