@@ -1,8 +1,7 @@
-package main
+package redbutton
 
 import (
-	"fmt"
-	"log"
+	"errors"
 	"time"
 
 	"github.com/GeertJohan/go.hid"
@@ -13,50 +12,44 @@ type Button struct {
 	Lid    bool
 }
 
-func GetState(dev *hid.Device) Button {
+func GetState(dev *hid.Device) (Button, error) {
 	buf := make([]byte, 8)
 	buf[0] = 0x01
 	buf[7] = 0x02
 
 	if _, err := dev.Write(buf); err != nil {
-		log.Fatal(err)
+		return Button{}, err
 	}
 
 	if _, err := dev.ReadTimeout(buf, 200); err != nil {
-		log.Fatal(err)
+		return Button{}, err
 	}
 
 	if buf[7] != 0x03 {
-		log.Fatal("bad magic")
+		return Button{}, errors.New("bad magic")
 	}
 
 	return Button{
 		buf[0]&(1<<0) == 0,
 		buf[0]&(1<<1) == 0,
-	}
+	}, nil
 }
 
 func PollState(dev *hid.Device) <-chan Button {
-	state := make(chan Button)
+	ch := make(chan Button)
 	go func() {
 		for {
-			state <- GetState(dev)
+			state, err := GetState(dev)
+			if err != nil {
+				panic(err)
+			}
+			ch <- state
 			time.Sleep(100 * time.Millisecond)
 		}
 	}()
-	return state
+	return ch
 }
 
-func main() {
-	dev, err := hid.Open(0x1D34, 0x000D, "")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer dev.Close()
-
-	state := PollState(dev)
-
-	for {
-		fmt.Println(<-state)
-	}
+func Open() (*hid.Device, error) {
+	return hid.Open(0x1D34, 0x000D, "")
 }
