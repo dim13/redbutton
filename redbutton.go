@@ -12,7 +12,7 @@ type Button struct {
 	Lid    bool
 }
 
-func GetState(dev *hid.Device) (Button, error) {
+func State(dev *hid.Device) (Button, error) {
 	buf := make([]byte, 8)
 	buf[0] = 0x01
 	buf[7] = 0x02
@@ -35,11 +35,11 @@ func GetState(dev *hid.Device) (Button, error) {
 	}, nil
 }
 
-func PollState(dev *hid.Device) <-chan Button {
+func Poll(dev *hid.Device) <-chan Button {
 	ch := make(chan Button)
 	go func() {
 		for {
-			state, err := GetState(dev)
+			state, err := State(dev)
 			if err != nil {
 				panic(err)
 			}

@@ -14,7 +14,7 @@ func main() {
 	}
 	defer dev.Close()
 
-	state := redbutton.PollState(dev)
+	state := redbutton.Poll(dev)
 	for {
 		fmt.Println(<-state)
 	}
