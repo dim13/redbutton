@@ -21,7 +21,7 @@ func Init(b redbutton.Button) StateFn {
 func Armed(b redbutton.Button) StateFn {
 	if b == redbutton.Pressed {
 		log.Println("Go!")
-		Exec(os.Args[1:])
+		go Exec(os.Args[1:])
 		return Reset
 	}
 	return Init
