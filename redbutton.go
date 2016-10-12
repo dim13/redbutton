@@ -1,5 +1,7 @@
 package redbutton
 
+//go:generate stringer -type=Button
+
 import (
 	"time"
 
@@ -19,17 +21,6 @@ const (
 	Pressed
 	Armed
 )
-
-var state = map[Button]string{
-	Unknown: "Unknown",
-	Closed:  "Closed",
-	Pressed: "Pressed",
-	Armed:   "Armed",
-}
-
-func (b Button) String() string {
-	return state[b]
-}
 
 func State(dev *hid.Device) (Button, bool) {
 	buf := make([]byte, 8)
