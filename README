@@ -3,6 +3,7 @@ Gadget: http://dreamcheeky.com/big-red-button
 Doc: http://files.dreamcheeky.com.s3.amazonaws.com/uploads/dc/902/BigRedButtonDevManual.pdf
 
 generic-usb 0003:1D34:000D.0003: hiddev0,hidraw2: USB HID v1.10 Device [Dream Link DL100B Dream Cheeky Generic Controller] on usb-0000:07:00.0-2/input0
+hid-generic 0003:1D34:000D.0003: hiddev0,hidraw2: USB HID v1.10 Device [Dream Link DL100B Dream Cheeky Generic Controller] on usb-0000:00:14.0-10/input0
 
 Bus 002 Device 009: ID 1d34:000d  
 Device Descriptor:
