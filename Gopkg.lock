@@ -3,19 +3,13 @@
 
 [[projects]]
   branch = "master"
-  name = "github.com/GeertJohan/cgo.wchar"
+  name = "github.com/karalabe/hid"
   packages = ["."]
-  revision = "a0ecb6cbd4aca3df15c391d95d087d92e5eeb8f7"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/GeertJohan/go.hid"
-  packages = ["."]
-  revision = "cd5395e4d58196799fb6a6841112bf1ccb8eb5b1"
+  revision = "f00545f9f3748e591590be3732d913c77525b10f"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ed6cd506c3e1f38de97fefa80238734a8d00c1248c9f89ae3c89e8253d01b05f"
+  inputs-digest = "65012ca0f7180193127e1f18fe0b918b783f26b4c61c6a08f8e7258ac43f4651"
   solver-name = "gps-cdcl"
   solver-version = 1

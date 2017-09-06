@@ -3,9 +3,10 @@ package redbutton
 //go:generate stringer -type=Button
 
 import (
+	"errors"
 	"time"
 
-	"github.com/GeertJohan/go.hid"
+	"github.com/karalabe/hid"
 )
 
 const (
@@ -31,7 +32,7 @@ func State(dev *hid.Device) (Button, bool) {
 		return Unknown, false
 	}
 
-	if _, err := dev.ReadTimeout(buf, 10); err != nil {
+	if _, err := dev.Read(buf); err != nil {
 		return Unknown, false
 	}
 
@@ -61,5 +62,9 @@ func Poll(dev *hid.Device) <-chan Button {
 }
 
 func Open() (*hid.Device, error) {
-	return hid.Open(vendor, product, "")
+	devs := hid.Enumerate(vendor, product)
+	if len(devs) == 0 {
+		return nil, errors.New("not found")
+	}
+	return devs[0].Open()
 }
