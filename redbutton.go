@@ -25,7 +25,7 @@ const (
 
 func State(dev *hid.Device) (Button, bool) {
 	buf := make([]byte, 8)
-	buf[0] = 0x01
+	buf[0] = 0x01 // 0x08 ?
 	buf[7] = 0x02
 
 	if _, err := dev.Write(buf); err != nil {
