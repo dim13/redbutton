@@ -25,16 +25,14 @@ const (
 )
 
 func State(dev *hid.Device) (Event, error) {
+	// leading zero disables sending of report number
 	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0, 2}
-
 	if _, err := dev.Write(buf); err != nil {
 		return Unknown, err
 	}
-
 	if _, err := dev.Read(buf[:8]); err != nil {
 		return Unknown, err
 	}
-
 	return Event(buf[0]), nil
 }
 
