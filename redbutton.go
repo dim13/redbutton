@@ -47,7 +47,7 @@ func Poll(dev *hid.Device) <-chan Button {
 	ch := make(chan Button)
 	go func() {
 		prev := Unknown
-		tick := time.NewTicker(100 * time.Millisecond)
+		tick := time.NewTicker(200 * time.Millisecond)
 		defer tick.Stop()
 		for range tick.C {
 			if state, ok := State(dev); ok {
