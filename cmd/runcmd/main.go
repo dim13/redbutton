@@ -8,9 +8,9 @@ import (
 	"dim13.org/redbutton"
 )
 
-type StateFn func(redbutton.Event) StateFn
+type stateFn func(redbutton.Event) stateFn
 
-func Init(b redbutton.Event) StateFn {
+func Init(b redbutton.Event) stateFn {
 	if b == redbutton.LidOpen {
 		log.Println("Ready...")
 		return Armed
@@ -18,7 +18,7 @@ func Init(b redbutton.Event) StateFn {
 	return Init
 }
 
-func Armed(b redbutton.Event) StateFn {
+func Armed(b redbutton.Event) stateFn {
 	if b == redbutton.ButtonPressed {
 		log.Println("Go!")
 		go Exec(os.Args[1:])
@@ -27,7 +27,7 @@ func Armed(b redbutton.Event) StateFn {
 	return Init
 }
 
-func Reset(b redbutton.Event) StateFn {
+func Reset(b redbutton.Event) stateFn {
 	if b == redbutton.LidClosed {
 		log.Println("Reset...")
 		return Init
@@ -56,7 +56,7 @@ func main() {
 	defer dev.Close()
 
 	ev := redbutton.Poll(dev, redbutton.PollInterval)
-	for stateFn := Init; stateFn != nil; {
-		stateFn = stateFn(<-ev)
+	for state := Init; state != nil; {
+		state = state(<-ev)
 	}
 }
