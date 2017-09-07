@@ -25,20 +25,14 @@ const (
 )
 
 func State(dev *hid.Device) (Button, error) {
-	buf := make([]byte, 8)
-	buf[0] = 0x01
-	buf[7] = 0x02
+	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0, 2}
 
 	if _, err := dev.Write(buf); err != nil {
 		return Unknown, err
 	}
 
-	if _, err := dev.Read(buf); err != nil {
+	if _, err := dev.Read(buf[:8]); err != nil {
 		return Unknown, err
-	}
-
-	if buf[7] != 0x03 {
-		return Unknown, nil
 	}
 
 	return Button(buf[0] & 0x03), nil
