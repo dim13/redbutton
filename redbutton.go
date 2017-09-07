@@ -10,8 +10,9 @@ import (
 )
 
 const (
-	vendor  = 0x1d34
-	product = 0x000d
+	vendor       = 0x1d34
+	product      = 0x000d
+	PollInterval = 200 * time.Millisecond
 )
 
 type Button int
@@ -23,37 +24,43 @@ const (
 	Armed
 )
 
-func State(dev *hid.Device) (Button, bool) {
+func State(dev *hid.Device) (Button, error) {
 	buf := make([]byte, 8)
 	buf[0] = 0x01
 	buf[7] = 0x02
 
 	if _, err := dev.Write(buf); err != nil {
-		return Unknown, false
+		return Unknown, err
 	}
 
 	if _, err := dev.Read(buf); err != nil {
-		return Unknown, false
+		return Unknown, err
 	}
 
 	if buf[7] != 0x03 {
-		return Unknown, false
+		return Unknown, nil
 	}
 
-	return Button(buf[0] & 0x03), true
+	return Button(buf[0] & 0x03), nil
 }
 
-func Poll(dev *hid.Device) <-chan Button {
+func Poll(dev *hid.Device, d time.Duration) <-chan Button {
+	if d == 0 {
+		d = PollInterval
+	}
 	ch := make(chan Button)
 	go func() {
 		prev := Unknown
-		tick := time.NewTicker(200 * time.Millisecond)
+		tick := time.NewTicker(d)
 		defer tick.Stop()
+		defer close(ch)
 		for range tick.C {
-			if state, ok := State(dev); ok {
-				if state != prev {
-					ch <- state
-				}
+			state, err := State(dev)
+			if err != nil {
+				return
+			}
+			if state != prev {
+				ch <- state
 				prev = state
 			}
 		}
