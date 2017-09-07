@@ -55,8 +55,8 @@ func main() {
 	}
 	defer dev.Close()
 
-	state := redbutton.Poll(dev, redbutton.PollInterval)
+	ev := redbutton.Poll(dev, redbutton.PollInterval)
 	for stateFn := Init; stateFn != nil; {
-		stateFn = stateFn(<-state)
+		stateFn = stateFn(<-ev)
 	}
 }
