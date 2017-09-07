@@ -1,7 +1,5 @@
 package redbutton
 
-//go:generate stringer -type=Button
-
 import (
 	"errors"
 	"time"
@@ -15,16 +13,18 @@ const (
 	PollInterval = 200 * time.Millisecond
 )
 
-type Button int
+//go:generate stringer -type=Event
+
+type Event int
 
 const (
-	Unknown Button = iota
-	Closed
-	Pressed
-	Armed
+	Unknown       Event = 0x00
+	LidClosed     Event = 0x15
+	ButtonPressed Event = 0x16
+	LidOpen       Event = 0x17
 )
 
-func State(dev *hid.Device) (Button, error) {
+func State(dev *hid.Device) (Event, error) {
 	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0, 2}
 
 	if _, err := dev.Write(buf); err != nil {
@@ -35,14 +35,14 @@ func State(dev *hid.Device) (Button, error) {
 		return Unknown, err
 	}
 
-	return Button(buf[0] & 0x03), nil
+	return Event(buf[0]), nil
 }
 
-func Poll(dev *hid.Device, d time.Duration) <-chan Button {
+func Poll(dev *hid.Device, d time.Duration) <-chan Event {
 	if d == 0 {
 		d = PollInterval
 	}
-	ch := make(chan Button)
+	ch := make(chan Event)
 	go func() {
 		prev := Unknown
 		tick := time.NewTicker(d)
