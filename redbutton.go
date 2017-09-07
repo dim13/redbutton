@@ -44,7 +44,7 @@ func Poll(dev *hid.Device, d time.Duration) <-chan Event {
 	}
 	ch := make(chan Event)
 	go func() {
-		prev := Unknown
+		prev := LidClosed
 		tick := time.NewTicker(d)
 		defer tick.Stop()
 		defer close(ch)
@@ -53,10 +53,10 @@ func Poll(dev *hid.Device, d time.Duration) <-chan Event {
 			if err != nil {
 				return
 			}
-			if state != prev {
+			if state != prev && prev != ButtonPressed {
 				ch <- state
-				prev = state
 			}
+			prev = state
 		}
 	}()
 	return ch
