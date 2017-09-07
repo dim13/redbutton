@@ -24,7 +24,7 @@ const (
 	LidOpen       Event = 0x17
 )
 
-func State(dev *hid.Device) (Event, error) {
+func Report(dev *hid.Device) (Event, error) {
 	// leading zero disables sending of report number
 	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0, 2}
 	if _, err := dev.Write(buf); err != nil {
@@ -47,14 +47,14 @@ func Poll(dev *hid.Device, d time.Duration) <-chan Event {
 		defer tick.Stop()
 		defer close(ch)
 		for range tick.C {
-			state, err := State(dev)
+			ev, err := Report(dev)
 			if err != nil {
 				return
 			}
-			if state != prev && prev != ButtonPressed {
-				ch <- state
+			if ev != prev && prev != ButtonPressed {
+				ch <- ev
 			}
-			prev = state
+			prev = ev
 		}
 	}()
 	return ch
