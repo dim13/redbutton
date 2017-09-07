@@ -36,11 +36,11 @@ func Reset(b redbutton.Button) StateFn {
 
 func Exec(args []string) {
 	cmd := exec.Command(args[0], args[1:]...)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err := cmd.Run(); err != nil {
 		log.Fatal(err)
 	}
-	log.Println(string(out))
 }
 
 func main() {
