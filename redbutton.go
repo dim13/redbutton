@@ -18,10 +18,10 @@ const (
 type Event int
 
 const (
-	Unknown       Event = 0x00
-	LidClosed     Event = 0x15
-	ButtonPressed Event = 0x16
-	LidOpen       Event = 0x17
+	Unknown Event = iota
+	Disabled
+	Pressed
+	Enabled
 )
 
 func Report(dev *hid.Device) (Event, error) {
@@ -33,7 +33,7 @@ func Report(dev *hid.Device) (Event, error) {
 	if _, err := dev.Read(buf[:8]); err != nil {
 		return Unknown, err
 	}
-	return Event(buf[0]), nil
+	return Event(buf[0] & 3), nil
 }
 
 func Poll(dev *hid.Device, d time.Duration) <-chan Event {
@@ -42,7 +42,7 @@ func Poll(dev *hid.Device, d time.Duration) <-chan Event {
 	}
 	ch := make(chan Event)
 	go func() {
-		prev := LidClosed
+		prev := Disabled
 		tick := time.NewTicker(d)
 		defer tick.Stop()
 		defer close(ch)
@@ -51,7 +51,7 @@ func Poll(dev *hid.Device, d time.Duration) <-chan Event {
 			if err != nil {
 				return
 			}
-			if ev != prev && prev != ButtonPressed {
+			if ev != prev && prev != Pressed {
 				ch <- ev
 			}
 			prev = ev

@@ -4,24 +4,13 @@ package redbutton
 
 import "fmt"
 
-const (
-	_Event_name_0 = "Unknown"
-	_Event_name_1 = "LidClosedButtonPressedLidOpen"
-)
+const _Event_name = "UnknownDisabledPressedEnabled"
 
-var (
-	_Event_index_0 = [...]uint8{0, 7}
-	_Event_index_1 = [...]uint8{0, 9, 22, 29}
-)
+var _Event_index = [...]uint8{0, 7, 15, 22, 29}
 
 func (i Event) String() string {
-	switch {
-	case i == 0:
-		return _Event_name_0
-	case 21 <= i && i <= 23:
-		i -= 21
-		return _Event_name_1[_Event_index_1[i]:_Event_index_1[i+1]]
-	default:
+	if i < 0 || i >= Event(len(_Event_index)-1) {
 		return fmt.Sprintf("Event(%d)", i)
 	}
+	return _Event_name[_Event_index[i]:_Event_index[i+1]]
 }

@@ -11,7 +11,7 @@ import (
 type stateFn func(redbutton.Event) stateFn
 
 func Init(b redbutton.Event) stateFn {
-	if b == redbutton.LidOpen {
+	if b == redbutton.Enabled {
 		log.Println("Ready...")
 		return Armed
 	}
@@ -19,7 +19,7 @@ func Init(b redbutton.Event) stateFn {
 }
 
 func Armed(b redbutton.Event) stateFn {
-	if b == redbutton.ButtonPressed {
+	if b == redbutton.Pressed {
 		log.Println("Go!")
 		go Exec(os.Args[1:])
 		return Reset
@@ -28,7 +28,7 @@ func Armed(b redbutton.Event) stateFn {
 }
 
 func Reset(b redbutton.Event) stateFn {
-	if b == redbutton.LidClosed {
+	if b == redbutton.Disabled {
 		log.Println("Reset...")
 		return Init
 	}
