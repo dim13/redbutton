@@ -1,17 +1,11 @@
 package redbutton
 
 import (
-	"errors"
+	"io"
 	"time"
-
-	"github.com/karalabe/hid"
 )
 
-const (
-	vendor       = 0x1d34
-	product      = 0x000d
-	PollInterval = 200 * time.Millisecond
-)
+const PollInterval = 200 * time.Millisecond
 
 //go:generate stringer -type=Event
 
@@ -24,7 +18,7 @@ const (
 	Enabled
 )
 
-func Report(dev *hid.Device) (Event, error) {
+func Report(dev io.ReadWriter) (Event, error) {
 	// leading zero disables sending of report number
 	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0, 2}
 	if _, err := dev.Write(buf); err != nil {
@@ -36,7 +30,7 @@ func Report(dev *hid.Device) (Event, error) {
 	return Event(buf[0] & 3), nil
 }
 
-func Poll(dev *hid.Device, d time.Duration) <-chan Event {
+func Poll(dev io.ReadWriter, d time.Duration) <-chan Event {
 	if d == 0 {
 		d = PollInterval
 	}
@@ -58,12 +52,4 @@ func Poll(dev *hid.Device, d time.Duration) <-chan Event {
 		}
 	}()
 	return ch
-}
-
-func Open() (*hid.Device, error) {
-	devs := hid.Enumerate(vendor, product)
-	if len(devs) == 0 {
-		return nil, errors.New("not found")
-	}
-	return devs[0].Open()
 }
