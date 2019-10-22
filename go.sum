@@ -1,2 +1,2 @@
-github.com/karalabe/hid v0.0.0-20170821103837-f00545f9f374 h1:qWVzfdrfgIeyHoUq3uICwVa0xGUVXq+LNNBixlXFWBo=
-github.com/karalabe/hid v0.0.0-20170821103837-f00545f9f374/go.mod h1:YvbcH+3Wo6XPs9nkgTY3u19KXLauXW+J5nB7hEHuX0A=
+github.com/karalabe/hid v1.0.0 h1:+/CIMNXhSU/zIJgnIvBD2nKHxS/bnRHhhs9xBryLpPo=
+github.com/karalabe/hid v1.0.0/go.mod h1:Vr51f8rUOLYrfrWDFlV12GGQgM5AT8sVh+2fY4MPeu8=
