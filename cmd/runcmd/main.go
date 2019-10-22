@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"dim13.org/redbutton"
+	"github.com/dim13/redbutton"
 )
 
 type stateFn func(redbutton.Event) stateFn

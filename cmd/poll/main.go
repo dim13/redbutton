@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"dim13.org/redbutton"
+	"github.com/dim13/redbutton"
 )
 
 func main() {
