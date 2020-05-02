@@ -20,7 +20,7 @@ const (
 
 func Report(dev io.ReadWriter) (Event, error) {
 	// leading zero disables sending of report number
-	buf := []byte{0, 0, 0, 0, 0, 0, 0, 0, 2}
+	buf := []byte{8: 2}
 	if _, err := dev.Write(buf); err != nil {
 		return Unknown, err
 	}
