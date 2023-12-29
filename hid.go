@@ -2,8 +2,9 @@ package redbutton
 
 import (
 	"errors"
+	"io"
 
-	"github.com/karalabe/hid"
+	"github.com/sstallion/go-hid"
 )
 
 const (
@@ -16,12 +17,9 @@ var (
 	ErrNotFound    = errors.New("device not found")
 )
 
-func Open() (*hid.Device, error) {
-	if !hid.Supported() {
-		return nil, ErrUnsupported
+func Open() (io.ReadWriteCloser, error) {
+	if err := hid.Init(); err != nil {
+		return nil, err
 	}
-	for _, dev := range hid.Enumerate(vendorID, productID) {
-		return dev.Open()
-	}
-	return nil, ErrNotFound
+	return hid.OpenFirst(vendorID, productID)
 }
